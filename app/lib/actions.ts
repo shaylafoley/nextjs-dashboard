@@ -1,6 +1,7 @@
 'use server';
  
 import { z } from 'zod';
+import { ZodError } from 'zod';
 import { revalidatePath } from 'next/cache';
 import postgres from 'postgres';
 import { signIn } from '@/auth';
@@ -32,22 +33,45 @@ export type State = {
   };
   message?: string | null;
 };
- 
-export async function createInvoice(prevState: State, formData: FormData) {
+
+
+export async function createInvoice(
+  prevState: State, 
+  formData: FormData
+): Promise<{ success: boolean; message: string } | { error: ZodError }> {  // Add a return type annotation
   // Validate form using Zod
   const validatedFields = createInvoice.safeParse({
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
     status: formData.get('status'),
   });
+
+  if (validatedFields.success) {
+    // Logic for creating invoice, assuming this returns an object
+    return { success: true, message: 'Invoice created successfully' };
+  } else {
+    // Return error details if validation fails
+    return { error: validatedFields.error };
+  }
+}
+
+// export async function createInvoice(prevState: State, formData: FormData
+
+// ): Promise<{ success: boolean; message: string } | { error: ZodError }> {
+//   // Validate form using Zod
+//   const validatedFields = createInvoice.safeParse({
+//     customerId: formData.get('customerId'),
+//     amount: formData.get('amount'),
+//     status: formData.get('status'),
+//   });
  
   // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Create Invoice.',
-    };
-  }
+  // if (!validatedFields.success) {
+  //   return {
+  //     errors: validatedFields.error.flatten().fieldErrors,
+  //     message: 'Missing Fields. Failed to Create Invoice.',
+  //   };
+  // }
  
   // Prepare data for insertion into the database
   const { customerId, amount, status } = validatedFields.data;
