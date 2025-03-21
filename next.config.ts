@@ -2,13 +2,13 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   experimental: {
-    //ppr: 'incremental'
+    // ppr: 'incremental'
   },
 
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true, 
   },
 };
 
-
 export default nextConfig;
+
