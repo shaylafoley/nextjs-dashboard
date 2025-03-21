@@ -4,16 +4,15 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
  
-export default function Search({ /*placeholder*/ }: { placeholder: string }) {
+export default function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
   
   const _handleSearch = useDebouncedCallback((term) => {
-    console.log(`Searching... ${term}`)
+    console.log(`Searching... ${term}`);
 
     const params = new URLSearchParams(searchParams);
-    //params.set('page', '1');
     if (term) {
       params.set('query', term);
     } else {
@@ -21,6 +20,38 @@ export default function Search({ /*placeholder*/ }: { placeholder: string }) {
     }
     replace(`${pathname}?${params.toString()}`);
   }, 300);
+
+  // Return JSX to fix the issue
+  return (
+    <div className="search-container">
+      <input 
+        type="text" 
+        placeholder={placeholder} 
+        onChange={(e) => _handleSearch(e.target.value)} 
+        className="search-input"
+      />
+    </div>
+  );
+}
+
+
+// export default function Search({ placeholder }: { placeholder: string }) {
+//   const searchParams = useSearchParams();
+//   const pathname = usePathname();
+//   const { replace } = useRouter();
+  
+//   const _handleSearch = useDebouncedCallback((term) => {
+//     console.log(`Searching... ${term}`)
+
+//     const params = new URLSearchParams(searchParams);
+//     //params.set('page', '1');
+//     if (term) {
+//       params.set('query', term);
+//     } else {
+//       params.delete('query');
+//     }
+//     replace(`${pathname}?${params.toString()}`);
+//   }, 300);
  
 
 // 'use client';
