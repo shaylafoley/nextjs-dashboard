@@ -5,16 +5,17 @@ export const authConfig = {
     signIn: '/login',
   },
   callbacks: {
-    async authorized({ auth, request: { nextUrl } }) {
+    authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
 
       if (isOnDashboard) {
-        return isLoggedIn; // Redirect unauthenticated users
+        if (isLoggedIn) return true; // Redirect unauthenticated users
+        return false;
       }
 
-      if (isLoggedIn) {
-        return nextUrl.origin + '/dashboard'; // Redirect logged-in users
+      else if (isLoggedIn) {
+        return Response.redirect(new URL('dashboard', nextUrl)); // Redirect logged-in users
       }
 
       return true; // Allow access
